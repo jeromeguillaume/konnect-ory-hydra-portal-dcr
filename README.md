@@ -16,7 +16,7 @@ Install Yarn [^1.22.x](https://classic.yarnpkg.com/lang/en/docs/install)
 
 ### Hydra configuration
 1) Install Ory Hydra
-2) In Konnect, create a Gateway Service and a Route to publish the Hydra Administrative API (port 4445). Example of Route: https://api.client.net/idp)
+2) In Konnect, create a Gateway Service and a Route to publish the Hydra Administrative API (port 4445). Example of Route: https://api.client.net/idp
 3) Secure the Route by enabling the [OpenId Connect Plugin](https://docs.konghq.com/hub/kong-inc/openid-connect/). Enable the `auth_methods` = `client_credentials` or `introspection`
 4) The Route (through the Kong Gateway) has to reachable on Internet by Konnect
 
