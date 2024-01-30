@@ -1,7 +1,7 @@
 # Konnect Portal DCR Handler for Ory Hydra
 This repository is an implementation of an HTTP DCR bridge to enable integration between the [Konnect Dev Portal](https://docs.konghq.com/konnect/dev-portal/) and Ory Hydra. The HTTP DCR bridge acts as a proxy and translation layer between Hydra Admin API and DCR applications made in the Konnect Dev Portal.
 
-**Comment**: the Hydra DCR requires to re-use the `registration_access_token` (got on the application creation) for the refresh and the deletion of the application. As there is no way to store the `registration_access_token` in Konnect, we use the Hydra Admin API (port 4445) to manage the full lifecycle of the Application. The Hydra Admin API has to be secured by the Kong Gateway and an Authentication mechanism (Bearer token or Basic) configured in the OpenId Connect plugin
+**Comment**: the Hydra DCR requires to re-use the `registration_access_token` (got on the application creation) for the refresh and the deletion of the application. As there is no way to store the `registration_access_token` in Konnect, we use the Hydra Admin API (port 4445) (and not the Hydra DCR mechanism) to manage the full lifecycle of the Application. The Hydra Admin API has to be secured by the Kong Gateway and, at least, an Authentication mechanism (Bearer token or Basic) configured with the OpenId Connect plugin.
 
 This repository is forked from https://github.com/Kong/konnect-portal-dcr-handler. Please read the [README.md](https://github.com/Kong/konnect-portal-dcr-handler?tab=readme-ov-file) of this repo.
 
@@ -16,9 +16,13 @@ Install Yarn [^1.22.x](https://classic.yarnpkg.com/lang/en/docs/install)
 
 ### Hydra configuration
 1) Install Ory Hydra
-2) In Konnect, create a Gateway Service and a Route to publish the Hydra Administrative API (port 4445). Example of Route: https://api.client.net/idp
-3) Secure the Route by enabling the [OpenId Connect Plugin](https://docs.konghq.com/hub/kong-inc/openid-connect/). Enable the `auth_methods` = `client_credentials` or `introspection`
-4) The Route (through the Kong Gateway) has to reachable on Internet by Konnect
+2) Hydra - Admin API (port 4445)
+- In Konnect, create a Gateway Service and a Route to publish the Hydra Administrative API (port 4445). Example of Route: https://api.client.net/admin-idp
+- Secure the Route by enabling the [OpenId Connect Plugin](https://docs.konghq.com/hub/kong-inc/openid-connect/). Enable the `auth_methods` = `client_credentials` or `introspection`
+3) Hydra - Public API (port 4444)
+- As the Admin API, configure for the Public API a Gateway Service and a Route without Authenticaton.
+Example of Route: 
+https://api.client.net/public-idp
 
 ### Lambda function (first steps)
 1) Create the Function
@@ -35,12 +39,12 @@ Install Yarn [^1.22.x](https://classic.yarnpkg.com/lang/en/docs/install)
   - Change `Code` / `Runtime settings`: handler = `lambda.handler`
   - Change `Configuration`/`General configuration`: timeout = `10s`
   - Open `Configuration`/`Environment variables` and Edit:
-    - HYDRA_ADMIN_API = `<hydra-admin-api-to-be-replaced>` (it's the Hydra Administrative API (4445 port) published through the Kong Gateway, example: https://api.client.net/idp)
+    - HYDRA_ADMIN_API = `<hydra-admin-api-to-be-replaced>` (it's the Hydra Administrative API (4445 port) published through the Kong Gateway, example: https://api.client.net/admin-idp)
     - HYDRA_TOKEN_AUTHN = Bearer token
     - HYDRA_CLIENT_ID = a `client_id` created in Hydra
     - HYDRA_CLIENT_SECRET = the related `client_secret` in Hydra
 
-Choose one of the both AuthN mechanism: Bearer token or client_id/client_secret
+Choose one of the both AuthN mechanism: Bearer token or client_id/client_secret. The Lambda Function checks the presence of all variables; **so declare all variables even if there is no value**.
 
 **Click on Save**
 
@@ -54,7 +58,7 @@ See the Function URL
 2) Login to konnect
 3) Select Dev Portal / Settings / Application Setup menu and configure with:
   - External identity provider for applications = `HTTP`
-  - Issuer = `<hydra-admin-api-to-be-replaced>`
+  - Issuer = `<hydra-public-api-to-be-replaced>` (example: https://api.client.net/public-idp/.well-known/openid-configuration)
   - HTTP Base URL = `<AWS_Function_url-to-be-replaced>`
   - Scopes = `openid`
   - Consumer claims = `client_id`
@@ -78,7 +82,6 @@ See the Function URL
 ![Alt text](/images/4-AWS-S3-bucket.png?raw=true "AWS S3 bucket")
 
 ## Test locally the DCR Handler
-
 Install dependencies
 ```sh
 yarn install --frozen-lockfile
@@ -169,12 +172,12 @@ aws sso login
 4) Click on `Create`
 ![Alt text](/images/7-Konnect-DevPortal-NewApp.png?raw=true "Konnect Dev Portal - New client_id/client_secret")
 5) Go on Keycloak and check the new Client
-![Alt text](/images/8-Keycloak-NewClient.png?raw=true "Keycloak - New client")
+![Alt text](/images/8-Hydra-NewClient.png?raw=true "Hydra - New client")
 6) Go on Catalog, Select a Service and Register it to the new App
 7) Test access 
 - Request:
 ```sh
-http -a 1d2d6ea6-b409-4583-a0f1-8413d8603359:pW1qkzutE6czuO78oTL2GRSkEq8HL05l :8000/myhttpbin/anything
+http -a "01c6ea95-7e7a-4d00-92fb-204bbc29b03c:I3gV7EE#CUFqMGBI66_ceeyIbAcwJL" :8000/myhttpbin/anything
 ```
 - Response:
 ```sh
@@ -195,14 +198,12 @@ HTTP/1.1 200 OK
 }
 ```
 8) Test the Refresh secret
-- Select `My App`
+- Select `My app`
 - Select `Refresh secret` menu
 ![Alt text](/images/9-Konnect-Refresh-secret.png?raw=true "Konnect Dev Portal - Refresh secret")
-9) Go on Keycloak and check the new value of `client_secret` value`
-![Alt text](/images/10-Keycloak-Secret.png?raw=true "Keycloak - Refresh secret")
-10) Delete the App
-- Select `My App`
+9) Delete the App
+- Select `My app`
 - Select `Delete`
-![Alt text](/images/11-Konnect-DevPortal-DeleteApp.png?raw=true "Konnect Dev Portal - Delete App")
-11) Go on Keycloak and check that the client is no longer present
-![Alt text](/images/12-Keycloak-AppDeleted.png?raw=true "Keycloak - Deleted App")
+![Alt text](/images/10-Konnect-DevPortal-DeleteApp.png?raw=true "Konnect Dev Portal - Delete App")
+10) Go on Keycloak and check that the client is no longer present
+![Alt text](/images/11-Hydra-AppDeleted.png?raw=true "Keycloak - Deleted App")
