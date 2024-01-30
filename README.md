@@ -223,4 +223,4 @@ hydra get client 01c6ea95-7e7a-4d00-92fb-204bbc29b03c
 ![Alt text](/images/11-Hydra-AppDeleted.png?raw=true "Hydra - Deleted App")
 
 ### Other material
-see in [notes.txt](notes.txt) curl/httpie command to call directly Hydra APIs
+see in [notes.txt](notes.txt) example of commands (like curl) to call directly Hydra APIs
