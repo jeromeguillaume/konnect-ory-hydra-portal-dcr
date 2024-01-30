@@ -121,7 +121,7 @@ HTTP/1.1 201 Created
     "client_secret_expires_at": 0
 }
 ```
-Check on Keycloak the creation of this new `client`
+Check on Hydra the creation of this new `client`
 
 2) Refresh a `client_secret` of an Application
 - Request:
@@ -137,7 +137,7 @@ HTTP/1.1 200 OK
     "client_secret": "JJrUI01URnL863GRyTIIsdFeTrkDVbMj"
 }
 ```
-Check on Keycloak the value of the new `client_secret`
+Check on Hydra the value of the new `client_secret`
 
 3) Delete an Application
 - Request:
@@ -148,7 +148,7 @@ http DELETE :3000/f54b9dc4-ee16-4a99-bfc9-4107ae73d6a4 x-api-key:<DCR_token-to-b
 ```sh
 HTTP/1.1 204 No Content
 ```
-Check on Keycloak the deletion of this `client`
+Check on Hydra the deletion of this `client`
 
 ## Deploy the DCR Handler to the Lambda Function
 - The Git Workflow [ci.yml](.github/workflows/ci.yml) pushes the DCR Handler code in the Lambda Function.
@@ -171,7 +171,10 @@ aws sso login
 ![Alt text](/images/6-Konnect-DevPortal-NewApp.png?raw=true "Konnect Dev Portal - New App")
 4) Click on `Create`
 ![Alt text](/images/7-Konnect-DevPortal-NewApp.png?raw=true "Konnect Dev Portal - New client_id/client_secret")
-5) Go on Keycloak and check the new Client
+5) Go on Hydra Server and check the new Client
+```sh
+hydra get client 01c6ea95-7e7a-4d00-92fb-204bbc29b03c --format json-pretty
+```
 ![Alt text](/images/8-Hydra-NewClient.png?raw=true "Hydra - New client")
 6) Go on Catalog, Select a Service and Register it to the new App
 7) Test access 
@@ -205,5 +208,8 @@ HTTP/1.1 200 OK
 - Select `My app`
 - Select `Delete`
 ![Alt text](/images/10-Konnect-DevPortal-DeleteApp.png?raw=true "Konnect Dev Portal - Delete App")
-10) Go on Keycloak and check that the client is no longer present
-![Alt text](/images/11-Hydra-AppDeleted.png?raw=true "Keycloak - Deleted App")
+10) Go on Hydra Server and check that the client is no longer present
+```sh
+hydra get client 01c6ea95-7e7a-4d00-92fb-204bbc29b03c 
+```
+![Alt text](/images/11-Hydra-AppDeleted.png?raw=true "Hydra - Deleted App")
