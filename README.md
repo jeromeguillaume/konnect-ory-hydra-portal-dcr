@@ -14,6 +14,9 @@ Do a git clone of this repository
 ### Yarn
 Install Yarn [^1.22.x](https://classic.yarnpkg.com/lang/en/docs/install)
 
+### Httpie
+Install [httpie](https://httpie.io/docs/cli/installation) (or use curl if you are more confortable with that)
+
 ### Hydra configuration
 1) Install Ory Hydra
 - You can use the material provided in this repo to deploy Hydra in Kubernetes
