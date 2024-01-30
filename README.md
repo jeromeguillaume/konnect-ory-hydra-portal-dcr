@@ -107,11 +107,12 @@ The fastify server is started by default on port 3000
 - Request: `<DCR_token-to-be-replaced>`, `<portal_id-to-be-replaced>`, `<organization_id-to-be-replaced>` have to be replaced by their proper value. Go on Konnect / Dev Portal to get `portal_id` and `organization_id`
 ```sh
 http POST :3000/ redirect_uris=http://localhost \
-    x-api-key:<DCR_token-to-be-replaced> \
+    x-api-key:tB5915uprx3N \
     client_name=jegvscode1 \
     application_description=\
     grant_types\[\]=authorization_code \
     grant_types\[\]=refresh_token \
+    grant_types\[\]=client_credentials \
     grant_types\[\]=implicit \
     token_endpoint_auth_method=client_secret_jwt \
     portal_id=<portal_id-to-be-replaced> \
@@ -220,3 +221,6 @@ HTTP/1.1 200 OK
 hydra get client 01c6ea95-7e7a-4d00-92fb-204bbc29b03c 
 ```
 ![Alt text](/images/11-Hydra-AppDeleted.png?raw=true "Hydra - Deleted App")
+
+### Other material
+see in [notes.txt](notes.txt) curl/httpie command to call directly Hydra APIs
