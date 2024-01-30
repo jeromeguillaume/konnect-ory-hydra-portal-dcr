@@ -16,6 +16,16 @@ Install Yarn [^1.22.x](https://classic.yarnpkg.com/lang/en/docs/install)
 
 ### Hydra configuration
 1) Install Ory Hydra
+- You can use the material provided in this repo to deploy Hydra in Kubernetes
+- First, create a namespace called `ory`
+- Second, install the Database, for instance PostgreSQL: 
+```sh
+kubectl apply -f ory_install/1-postgresql.yaml
+```
+- Last, install Ory Server: 
+```sh
+./ory_install/2-oryHelm.sh
+```
 2) Hydra - Admin API (port 4445)
 - In Konnect, create a Gateway Service and a Route to publish the Hydra Administrative API (port 4445). Example of Route: https://api.client.net/admin-idp
 - Secure the Route by enabling the [OpenId Connect Plugin](https://docs.konghq.com/hub/kong-inc/openid-connect/). Enable the `auth_methods` = `client_credentials` or `introspection`
