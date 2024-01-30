@@ -35,10 +35,12 @@ Install Yarn [^1.22.x](https://classic.yarnpkg.com/lang/en/docs/install)
   - Change `Code` / `Runtime settings`: handler = `lambda.handler`
   - Change `Configuration`/`General configuration`: timeout = `10s`
   - Open `Configuration`/`Environment variables` and Edit:
-    - HYDRA_ADMIN_API = `<hydra-admin-api-to-be-replaced>` (it's  Hydra Administrative (4445 port) published through the Kong Gateway, example: https://api.client.net/idp)
+    - HYDRA_ADMIN_API = `<hydra-admin-api-to-be-replaced>` (it's the Hydra Administrative API (4445 port) published through the Kong Gateway, example: https://api.client.net/idp)
     - HYDRA_TOKEN_AUTHN = Bearer token
     - HYDRA_CLIENT_ID = a `client_id` created in Hydra
     - HYDRA_CLIENT_SECRET = the related `client_secret` in Hydra
+
+Choose one of the both AuthN mechanism: Bearer token or client_id/client_secret
 
 **Click on Save**
 
