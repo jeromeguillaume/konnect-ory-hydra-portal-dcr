@@ -74,7 +74,7 @@ See the Function URL
 ### S3 Bucket
 - Create a S3 bucket and call it for instance `konnect-portal-dcr-hydra`
 - The purpose of this bucket is to store the source code of the DCR Handler and to push it in the AWS Lambda Function
-- **You don't need to upload** the `ambda-dcr-http.zip` manually: it will be done automatically by the CI workfow
+- **You don't need to upload** the `lambda-dcr-http.zip` manually: it will be done automatically by the CI workfow
 ![Alt text](/images/4-AWS-S3-bucket.png?raw=true "AWS S3 bucket")
 
 ## Test locally the DCR Handler
